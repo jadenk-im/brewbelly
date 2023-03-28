@@ -4,22 +4,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>brewbelly</title>
 </head>
+<style>
+  #button {
+    z-index: 1000;
+    bottom: 48px;
+    left: 48px;
+    position: absolute;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ffffff;
+    background-color: #ffffff33;
+    border-radius: 48px;
+    color: #ffffff;
+  }
+
+  #button:hover {
+    background-color: #ffffff80;
+  }
+
+  #button:active {
+    background-color: #ffffff;
+    color: #161616;
+  }
+
+</style>
 <body>
   <!-- 1. The <iframe> (video player) will replace this <div> tag. -->
   <div style="z-index: 99; top: 0; left: 0; width: 100%; height: 100%; position: absolute;"  id='videoPlayer'></div>
   <div style="display: none;"  id='musicPlayer'></div>
-  <div style="display: none;"  id='podPlayer'></div>
+  <div style="display: none"  id='podPlayer'></div>
+  <button id='button' type="button" onclick="enableSound()">
+    <p>Click to enable sound.</p>
+  </button>
 </body>
 
 <script>
-  // 2. This code loads the IFrame Player API code asynchronously.
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  // 3. This function creates an <iframe> (and YouTube player)
-  //    after the API code downloads.
   var videoPlayer;
   var musicPlayer;
   var podPlayer;
@@ -50,7 +78,7 @@
         showinfo: 0,
         frameborder: 0,
         rel: 0,
-        mute: 0,
+        mute: 1,
         'listType': 'playlist',
         'list': 'PLGL1RS_tj0UH6RRpimrDTXc9tP8FIx8LQ',
       },
@@ -67,7 +95,7 @@
         showinfo: 0,
         frameborder: 0,
         rel: 0,
-        mute: 0,
+        mute: 1,
         'listType': 'playlist',
         'list': 'PLrAXtmErZgOdP_8GztsuKi9nrraNbKKp4',
       },
@@ -78,7 +106,6 @@
     });
   }
 
-  // 4. The API will call this function when the video player is ready.
   function onVideoReady(event) {
     videoPlayer.setShuffle(true);
     videoPlayer.mute();
@@ -95,9 +122,16 @@
     podPlayer.playVideoAt(0);
   }
 
-  // 5. The API calls this function when the player's state changes.
   function onPlayerStateChange(event) {
     const player = event.target;
+  }
+
+  function enableSound() {
+    musicPlayer.unMute();
+    podPlayer.unMute();
+    var tempButton = document.getElementById('button');
+    var buttonParent = tempButton.parentElement;
+    buttonParent.removeChild(tempButton);
   }
 </script>
 </html>
