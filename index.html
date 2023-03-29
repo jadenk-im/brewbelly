@@ -35,7 +35,7 @@
 <body>
   <!-- 1. The <iframe> (video player) will replace this <div> tag. -->
   <div style="z-index: 99; top: 0; left: 0; width: 100%; height: 100%; position: absolute;"  id='videoPlayer'></div>
-  <div style="z-index: 199; top: 0; left: 0; width: 100%; height: 100%; position: absolute;"  id='podPlayer'></div>
+  <div style="display: none"  id='podPlayer'></div>
   <div style="display: none"  id='musicPlayer'></div>
   <button id='button' type="button" onclick="enableSound()">
     <p>Click to enable sound.</p>
@@ -43,17 +43,31 @@
 </body>
 
 <script>
+  let players = [];
+  const sources = [
+  {
+    id: 'PLGL1RS_tj0UFFqj8bbLCX0VxWKr2g8phq',
+    player: 'videoPlayer',
+    onReadyFn: onVideoReady
+  },
+  {
+    id: 'PLrAXtmErZgOdP_8GztsuKi9nrraNbKKp4',
+    player: 'podPlayer',
+    onReadyFn: onPodReady
+  },
+  {
+    id: 'PLGL1RS_tj0UH6RRpimrDTXc9tP8FIx8LQ',
+    player: 'musicPlayer',
+    onReadyFn: onMusicReady
+  }
+  ]
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  var videoPlayer;
-  var musicPlayer;
-  var podPlayer;
-
   function onYouTubeIframeAPIReady() {
-    videoPlayer = new YT.Player('videoPlayer', {
+    players = sources.map(({ id, player, onReadyFn }) => new YT.Player(player, {
       playerVars: {
         autoplay: 1,
         loop: 1,
@@ -63,47 +77,13 @@
         rel: 0,
         mute: 1,
         'listType': 'playlist',
-        'list': 'PLGL1RS_tj0UFFqj8bbLCX0VxWKr2g8phq',
+        'list': id,
       },
       events: {
-        'onReady': onVideoReady,
+        'onReady': onReadyFn,
         'onStateChange': onPlayerStateChange
         }
-      });
-    podPlayer = new YT.Player('podPlayer', {
-      playerVars: {
-        autoplay: 1,
-        loop: 1,
-        controls: 0,
-        showinfo: 0,
-        frameborder: 0,
-        rel: 0,
-        mute: 1,
-        'listType': 'playlist',
-        'list': 'PLrAXtmErZgOdP_8GztsuKi9nrraNbKKp4',
-      },
-      events: {
-        'onReady': onPodReady,
-        'onStateChange': onPlayerStateChange
-        }
-    });
-    musicPlayer = new YT.Player('musicPlayer', {
-      playerVars: {
-        autoplay: 1,
-        loop: 1,
-        controls: 0,
-        showinfo: 0,
-        frameborder: 0,
-        rel: 0,
-        mute: 1,
-        'listType': 'playlist',
-        'list': 'PLGL1RS_tj0UH6RRpimrDTXc9tP8FIx8LQ',
-      },
-      events: {
-        'onReady': onMusicReady,
-        'onStateChange': onPlayerStateChange
-        }
-    });
+    }));
   }
 
   function onVideoReady(event) {
@@ -114,23 +94,28 @@
 
   function onPodReady(event) {
     podPlayer.setShuffle(true);
+    podPlayer.setVolume(100)
     podPlayer.playVideoAt(0);
   }
 
   function onMusicReady(event) {
     musicPlayer.setShuffle(true);
+    musicPlayer.setVolume(50)
     musicPlayer.playVideoAt(0);
   }
 
   function onPlayerStateChange(event) {
-    const player = event.target;
+    if (event.data != YT.PlayerState.PLAYING || done) {
+      event.target.playVideo()
+    }
   }
 
   function enableSound() {
-    musicPlayer.unMute();
-    musicPlayer.setVolume(50)
-    podPlayer.unMute();
-    podPlayer.setVolume(100)
+    for (const player of players) {
+      if (player.id !== YT.get('videoPlayer').id) {
+        player.unMute();
+      }
+    }
     var tempButton = document.getElementById('button');
     var buttonParent = tempButton.parentElement;
     buttonParent.removeChild(tempButton);
