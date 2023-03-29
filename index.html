@@ -90,8 +90,11 @@
   }
 
   function onPlayerStateChange(event) {
-    if (event.data != YT.PlayerState.PLAYING || done) {
+    if (event.data != YT.PlayerState.PLAYING && event.data != YT.PlayerState.BUFFERING) {
       event.target.playVideo()
+      if (player.id !== YT.get('videoPlayer').id) {
+        event.target.unMute()
+      }
     }
   }
 
