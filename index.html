@@ -47,18 +47,15 @@
   const sources = [
   {
     id: 'PLGL1RS_tj0UFFqj8bbLCX0VxWKr2g8phq',
-    player: 'videoPlayer',
-    onReadyFn: onVideoReady
+    player: 'videoPlayer'
   },
   {
     id: 'PLrAXtmErZgOdP_8GztsuKi9nrraNbKKp4',
-    player: 'podPlayer',
-    onReadyFn: onPodReady
+    player: 'podPlayer'
   },
   {
     id: 'PLGL1RS_tj0UH6RRpimrDTXc9tP8FIx8LQ',
-    player: 'musicPlayer',
-    onReadyFn: onMusicReady
+    player: 'musicPlayer'
   }
   ]
   var tag = document.createElement('script');
@@ -80,28 +77,16 @@
         'list': id,
       },
       events: {
-        'onReady': onReadyFn,
+        'onReady': onReady,
         'onStateChange': onPlayerStateChange
         }
     }));
   }
 
-  function onVideoReady(event) {
-    videoPlayer.setShuffle(true);
-    videoPlayer.mute();
-    videoPlayer.playVideoAt(0);
-  }
-
-  function onPodReady(event) {
-    podPlayer.setShuffle(true);
-    podPlayer.setVolume(100)
-    podPlayer.playVideoAt(0);
-  }
-
-  function onMusicReady(event) {
-    musicPlayer.setShuffle(true);
-    musicPlayer.setVolume(50)
-    musicPlayer.playVideoAt(0);
+  function onReady(event) {
+    event.target.setShuffle(true);
+    event.target.mute();
+    event.target.playVideoAt(0);
   }
 
   function onPlayerStateChange(event) {
@@ -113,6 +98,12 @@
   function enableSound() {
     for (const player of players) {
       if (player.id !== YT.get('videoPlayer').id) {
+        if (player.id === YT.get('podPlayer').id) {
+          player.setVolume(100);
+        }
+        if (player.id === YT.get('musicPlayer').id) {
+          player.setVolume(50);
+        }
         player.unMute();
       }
     }
