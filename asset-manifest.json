@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/brewbelly/static/css/main.bda26d8a.css",
+    "main.js": "/brewbelly/static/js/main.f8b39413.js",
+    "index.html": "/brewbelly/index.html",
+    "main.bda26d8a.css.map": "/brewbelly/static/css/main.bda26d8a.css.map",
+    "main.f8b39413.js.map": "/brewbelly/static/js/main.f8b39413.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bda26d8a.css",
+    "static/js/main.f8b39413.js"
+  ]
+}
